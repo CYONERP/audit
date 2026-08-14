@@ -83,3 +83,8 @@ A execução com escrita deve ser autorizada separadamente, monitorada e realiza
 O gateway expõe o namespace gradual `/api/audit-activity-standalone` em paralelo às rotas legadas `/api/audit` e às consultas de atividade de sessão. A integração do gateway resolve a base URL e a `serviceApiKey` pelo registro de integração `audit`, preservando bearer token, `X-Tenant-Id`, status HTTP e payloads remotos.
 
 A transição recomendada é: aplicar a migration no banco novo; cadastrar a integração `audit`; executar backfill dry-run; habilitar publicação assíncrona ou dual-write; comparar contagens e consultas; direcionar novos consumidores ao namespace standalone; e somente depois planejar a retirada das rotas antigas.
+
+<!-- OPERAON-DOCUMENTATION-LINK -->
+## Documentação
+
+A documentação técnica padronizada está em [docs/INDEX.md](docs/INDEX.md). Ela inclui arquitetura, responsabilidades, segurança, contratos, operação, testes, runbooks e decisões.
