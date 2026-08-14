@@ -1,4 +1,15 @@
-# Operaon Audit & Activity
+# Audit & Activity
+
+> Audit & Activity da Operaon para trilhas de auditoria, atividades e evidências operacionais.
+
+| Item | Referência |
+|---|---|
+| Documentação | [docs/INDEX.md](docs/INDEX.md) |
+| Segurança | [SECURITY.md](SECURITY.md) |
+| Contribuição | [CONTRIBUTING.md](CONTRIBUTING.md) |
+| Processo de release | [docs/release-process.md](docs/release-process.md) |
+
+---
 
 Standalone responsável pela ingestão, sanitização, persistência, consulta e retenção controlada de eventos de auditoria, atividade, segurança e sistema da plataforma Operaon.
 
