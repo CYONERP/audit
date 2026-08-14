@@ -5,7 +5,7 @@ process.env.NODE_ENV = 'test';
 process.env.DB_NAME = process.env.DB_NAME || 'operaon_audit_test';
 process.env.SERVICE_API_KEY = 'audit-test-service-key';
 process.env.JWT_SECRET = 'audit-test-jwt-secret-change-me';
-process.env.JWT_AUDIENCE = 'operaon-api,operaon-identity,operaon-audit';
+process.env.JWT_AUDIENCE = 'operaon-audit';
 
 const app = require('../src/app');
 const env = require('../src/config/env');
@@ -22,7 +22,7 @@ const token = (overrides = {}) => jwt.sign({
   permissions: ['audit:read', 'audit:write', 'activity:read'],
   roles: ['configured-role'],
   ...overrides,
-}, env.jwt.secret, { issuer: env.jwt.issuer, audience: 'operaon-api', expiresIn: '10m' });
+}, env.jwt.secret, { issuer: env.jwt.issuer, audience: 'operaon-audit', expiresIn: '10m' });
 
 const headers = (bearer = token()) => ({
   Authorization: `Bearer ${bearer}`,
@@ -50,6 +50,18 @@ describe('Audit & Activity standalone contract', () => {
 
     const missingBearer = await request(app).get('/api/audit-activity/events').set('X-Service-Key', env.serviceApiKey);
     expect(missingBearer.status).toBe(401);
+  });
+
+  test('rejeita token destinado a outra audience', async () => {
+    const wrongAudience = jwt.sign({ sub: userA, tokenType: 'access', tenantId: tenantA, permissions: ['audit:read'] }, env.jwt.secret, { issuer: env.jwt.issuer, audience: 'operaon-api', expiresIn: '10m' });
+    const response = await request(app).get('/api/audit-activity/events').set(headers(wrongAudience));
+    expect(response.status).toBe(401);
+  });
+
+  test('não concede bypass universal a token de serviço', async () => {
+    const serviceToken = token({ service: true, permissions: [] });
+    const response = await request(app).get('/api/audit-activity/events').set(headers(serviceToken));
+    expect(response.status).toBe(403);
   });
 
   test('ingere evento e não devolve segredos', async () => {
