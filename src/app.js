@@ -5,7 +5,10 @@ const routes = require('./routes');
 const { requestContext, authRateLimiter, errorHandler } = require('./middlewares/operational');
 const sequelize = require('./config/database');
 
+const { communicationContext } = require('./middlewares/communicationContext');
+
 const app = express();
+app.use(communicationContext);
 app.disable('x-powered-by');
 app.use(helmet());
 app.use(cors());
