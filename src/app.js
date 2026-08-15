@@ -15,7 +15,14 @@ app.use(collectMetrics);
 app.get('/metrics', observabilityMetricsController.metrics);
 app.disable('x-powered-by');
 app.use(helmet());
-app.use(cors());
+const allowedCorsOrigins = String(process.env.CORS_ORIGIN || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter((origin) => origin && origin !== '*');
+app.use(cors({
+  origin: (origin, callback) => callback(null, !origin || allowedCorsOrigins.includes(origin)),
+  credentials: allowedCorsOrigins.length > 0,
+}));
 app.use(express.json({ limit: '256kb' }));
 app.use(requestContext);
 app.use(authRateLimiter);
